@@ -1,0 +1,161 @@
+version: 2
+
+sources:
+  - name: raw
+    tables:
+      - name: cities_raw
+        columns:
+          - name: _airbyte_raw_id
+            data_type: string
+          - name: _airbyte_extracted_at
+            data_type: timestamp
+          - name: _airbyte_meta
+            data_type: json
+          - name: _airbyte_generation_id
+            data_type: int64
+          - name: city_id
+            data_type: int64
+          - name: country
+            data_type: string
+          - name: city_name
+            data_type: string
+          - name: launch_date
+            data_type: date
+
+      - name: driver_status_events_raw
+        columns:
+          - name: _airbyte_raw_id
+            data_type: string
+          - name: _airbyte_extracted_at
+            data_type: timestamp
+          - name: _airbyte_meta
+            data_type: json
+          - name: _airbyte_generation_id
+            data_type: int64
+          - name: status
+            data_type: string
+          - name: event_id
+            data_type: int64
+          - name: driver_id
+            data_type: int64
+          - name: event_timestamp
+            data_type: datetime
+
+      - name: drivers_raw
+        columns:
+          - name: _airbyte_raw_id
+            data_type: string
+          - name: _airbyte_extracted_at
+            data_type: timestamp
+          - name: _airbyte_meta
+            data_type: json
+          - name: _airbyte_generation_id
+            data_type: int64
+          - name: rating
+            data_type: numeric
+          - name: city_id
+            data_type: int64
+          - name: driver_id
+            data_type: int64
+          - name: created_at
+            data_type: datetime
+          - name: updated_at
+            data_type: datetime
+          - name: vehicle_id
+            data_type: string
+          - name: driver_status
+            data_type: string
+          - name: onboarding_date
+            data_type: date
+
+      - name: payments_raw
+        columns:
+          - name: _airbyte_raw_id
+            data_type: string
+          - name: _airbyte_extracted_at
+            data_type: timestamp
+          - name: _airbyte_meta
+            data_type: json
+          - name: _airbyte_generation_id
+            data_type: int64
+          - name: fee
+            data_type: numeric
+          - name: amount
+            data_type: numeric
+          - name: trip_id
+            data_type: int64
+          - name: currency
+            data_type: string
+          - name: created_at
+            data_type: datetime
+          - name: payment_id
+            data_type: int64
+          - name: payment_status
+            data_type: string
+          - name: payment_provider
+            data_type: string
+
+      - name: riders_raw
+        columns:
+          - name: _airbyte_raw_id
+            data_type: string
+          - name: _airbyte_extracted_at
+            data_type: timestamp
+          - name: _airbyte_meta
+            data_type: json
+          - name: _airbyte_generation_id
+            data_type: int64
+          - name: country
+            data_type: string
+          - name: rider_id
+            data_type: int64
+          - name: created_at
+            data_type: datetime
+          - name: signup_date
+            data_type: date
+          - name: referral_code
+            data_type: string
+
+      - name: trips_raw
+        columns:
+          - name: _airbyte_raw_id
+            data_type: string
+          - name: _airbyte_extracted_at
+            data_type: timestamp
+          - name: _airbyte_meta
+            data_type: json
+          - name: _airbyte_generation_id
+            data_type: int64
+          - name: status
+            data_type: string
+          - name: city_id
+            data_type: int64
+          - name: trip_id
+            data_type: int64
+          - name: rider_id
+            data_type: int64
+          - name: driver_id
+            data_type: int64
+          - name: pickup_at
+            data_type: datetime
+          - name: created_at
+            data_type: datetime
+          - name: dropoff_at
+            data_type: datetime
+          - name: updated_at
+            data_type: datetime
+          - name: vehicle_id
+            data_type: string
+          - name: actual_fare
+            data_type: numeric
+          - name: is_corporate
+            data_type: boolean
+          - name: requested_at
+            data_type: datetime
+          - name: estimated_fare
+            data_type: numeric
+          - name: payment_method
+            data_type: string
+          - name: surge_multiplier
+            data_type: numeric
+
