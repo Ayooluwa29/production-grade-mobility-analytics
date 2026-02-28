@@ -1,0 +1,21 @@
+version: 2
+
+models:
+  - name: stg_trips
+    description: ""
+    columns:
+  - name: stg_payments
+    description: ""
+    columns:
+  - name: stg_driver_status_events
+    description: ""
+    columns:
+  - name: stg_drivers
+    description: ""
+    columns:
+  - name: stg_riders
+    description: ""
+    columns:
+  - name: stg_cities
+    description: ""
+    columns:

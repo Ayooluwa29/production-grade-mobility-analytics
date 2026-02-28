@@ -2,160 +2,236 @@ version: 2
 
 sources:
   - name: raw
+    description: ""
     tables:
       - name: cities_raw
+        description: ""
         columns:
           - name: _airbyte_raw_id
             data_type: string
+            description: ""
           - name: _airbyte_extracted_at
             data_type: timestamp
+            description: ""
           - name: _airbyte_meta
             data_type: json
+            description: ""
           - name: _airbyte_generation_id
             data_type: int64
+            description: ""
           - name: city_id
             data_type: int64
+            description: ""
           - name: country
             data_type: string
+            description: ""
           - name: city_name
             data_type: string
+            description: ""
           - name: launch_date
             data_type: date
+            description: ""
 
       - name: driver_status_events_raw
+        description: ""
         columns:
           - name: _airbyte_raw_id
             data_type: string
+            description: ""
           - name: _airbyte_extracted_at
             data_type: timestamp
+            description: ""
           - name: _airbyte_meta
             data_type: json
+            description: ""
           - name: _airbyte_generation_id
             data_type: int64
+            description: ""
           - name: status
             data_type: string
+            description: ""
           - name: event_id
             data_type: int64
+            description: ""
           - name: driver_id
             data_type: int64
+            description: ""
           - name: event_timestamp
             data_type: datetime
+            description: ""
 
       - name: drivers_raw
+        description: ""
         columns:
           - name: _airbyte_raw_id
             data_type: string
+            description: ""
           - name: _airbyte_extracted_at
             data_type: timestamp
+            description: ""
           - name: _airbyte_meta
             data_type: json
+            description: ""
           - name: _airbyte_generation_id
             data_type: int64
+            description: ""
           - name: rating
             data_type: numeric
+            description: ""
           - name: city_id
             data_type: int64
+            description: ""
           - name: driver_id
             data_type: int64
+            description: ""
           - name: created_at
             data_type: datetime
+            description: ""
           - name: updated_at
             data_type: datetime
+            description: ""
           - name: vehicle_id
             data_type: string
+            description: ""
           - name: driver_status
             data_type: string
+            description: ""
           - name: onboarding_date
             data_type: date
+            description: ""
 
       - name: payments_raw
+        description: ""
         columns:
           - name: _airbyte_raw_id
             data_type: string
+            description: ""
           - name: _airbyte_extracted_at
             data_type: timestamp
+            description: ""
           - name: _airbyte_meta
             data_type: json
+            description: ""
           - name: _airbyte_generation_id
             data_type: int64
+            description: ""
           - name: fee
             data_type: numeric
+            description: ""
           - name: amount
             data_type: numeric
+            description: ""
           - name: trip_id
             data_type: int64
+            description: ""
           - name: currency
             data_type: string
+            description: ""
           - name: created_at
             data_type: datetime
+            description: ""
           - name: payment_id
             data_type: int64
+            description: ""
           - name: payment_status
             data_type: string
+            description: ""
           - name: payment_provider
             data_type: string
+            description: ""
 
       - name: riders_raw
+        description: ""
         columns:
           - name: _airbyte_raw_id
             data_type: string
+            description: ""
           - name: _airbyte_extracted_at
             data_type: timestamp
+            description: ""
           - name: _airbyte_meta
             data_type: json
+            description: ""
           - name: _airbyte_generation_id
             data_type: int64
+            description: ""
           - name: country
             data_type: string
+            description: ""
           - name: rider_id
             data_type: int64
+            description: ""
           - name: created_at
             data_type: datetime
+            description: ""
           - name: signup_date
             data_type: date
+            description: ""
           - name: referral_code
             data_type: string
+            description: ""
 
       - name: trips_raw
+        description: ""
         columns:
           - name: _airbyte_raw_id
             data_type: string
+            description: ""
           - name: _airbyte_extracted_at
             data_type: timestamp
+            description: ""
           - name: _airbyte_meta
             data_type: json
+            description: ""
           - name: _airbyte_generation_id
             data_type: int64
+            description: ""
           - name: status
             data_type: string
+            description: ""
           - name: city_id
             data_type: int64
+            description: ""
           - name: trip_id
             data_type: int64
+            description: ""
           - name: rider_id
             data_type: int64
+            description: ""
           - name: driver_id
             data_type: int64
+            description: ""
           - name: pickup_at
             data_type: datetime
+            description: ""
           - name: created_at
             data_type: datetime
+            description: ""
           - name: dropoff_at
             data_type: datetime
+            description: ""
           - name: updated_at
             data_type: datetime
+            description: ""
           - name: vehicle_id
             data_type: string
+            description: ""
           - name: actual_fare
             data_type: numeric
+            description: ""
           - name: is_corporate
             data_type: boolean
+            description: ""
           - name: requested_at
             data_type: datetime
+            description: ""
           - name: estimated_fare
             data_type: numeric
+            description: ""
           - name: payment_method
             data_type: string
+            description: ""
           - name: surge_multiplier
             data_type: numeric
+            description: ""
 
