@@ -1,24 +1,25 @@
 {{
     config(
-        materialized='incremental'
+        materialized='incremental',
+        tags=["staging"]
     )
 }}
 
 SELECT
-    status,
+    DISTINCT(trip_id) AS trip_id,
     city_id,
-    trip_id,
     rider_id,
     driver_id,
+    vehicle_id,
+    status,
+    is_corporate,
+    payment_method,
+    actual_fare,
+    estimated_fare,
+    surge_multiplier,
     pickup_at,
     created_at,
     dropoff_at,
     updated_at,
-    vehicle_id,
-    actual_fare,
-    is_corporate,
-    requested_at,
-    estimated_fare,
-    payment_method,
-    surge_multiplier
+    requested_at
 FROM {{ source('raw', 'trips_raw') }}

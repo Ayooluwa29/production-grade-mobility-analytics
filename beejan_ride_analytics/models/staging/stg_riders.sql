@@ -1,13 +1,14 @@
 {{
     config(
-        materialized='incremental'
+        materialized='incremental',
+        tags=["staging"]
     )
 }}
 
 SELECT
+  DISTINCT(rider_id) AS rider_id,
   country,
-  rider_id,
+  referral_code,
   created_at,
-  signup_date,
-  referral_code
+  signup_date
 FROM {{ source('raw', 'riders_raw') }}

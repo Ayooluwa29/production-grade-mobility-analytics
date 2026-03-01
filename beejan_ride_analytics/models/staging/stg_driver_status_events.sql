@@ -1,12 +1,13 @@
 {{
     config(
-        materialized='incremental'
+        materialized='incremental',
+        tags=["staging"]
     )
 }}
 
 SELECT
-  status,
-  event_id,
+  DISTINCT(event_id) AS event_id,
   driver_id,
+  status,
   event_timestamp 
 FROM {{ source('raw', 'driver_status_events_raw') }}

@@ -1,16 +1,17 @@
 {{
     config(
-        materialized='incremental'
+        materialized='incremental',
+        tags=["staging"]
     )
 }}
 
 SELECT
+  DISTINCT(payment_id) AS payment_id,
+  trip_id,
+  payment_status,
+  payment_provider,
+  currency,
   fee,
   amount,
-  trip_id,
-  currency,
-  created_at,
-  payment_id,
-  payment_status,
-  payment_provider
+  created_at
   FROM {{ source('raw', 'payments_raw') }}

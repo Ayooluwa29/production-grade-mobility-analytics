@@ -1,16 +1,17 @@
 {{
     config(
-        materialized='incremental'
+        materialized='incremental',
+        tags=["staging"]
     )
 }}
 
 SELECT
-    rating,
-    city_id, 
-    driver_id,
-    created_at,
-    updated_at,
+    DISTINCT(driver_id) AS driver_id,
+    city_id,
     vehicle_id,
     driver_status,
+    rating,
+    created_at,
+    updated_at,
     onboarding_date
 FROM {{ source('raw', 'drivers_raw') }}

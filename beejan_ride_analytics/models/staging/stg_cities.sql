@@ -1,11 +1,12 @@
 {{
     config(
-        materialized='incremental'
+        materialized='incremental',
+        tags=["staging"]
     )
 }}
 
 SELECT
-    city_id,
+    DISTINCT(city_id) AS city_id,
     country,
     city_name,
     launch_date
