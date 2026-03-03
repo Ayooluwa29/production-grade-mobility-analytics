@@ -1,6 +1,7 @@
 {{
     config(
         materialized='incremental',
+        unique_key = 'trip_id',
         tags=["staging"]
     )
 }}
@@ -23,3 +24,9 @@ SELECT
     updated_at,
     requested_at
 FROM {{ source('raw', 'trips_raw') }}
+
+{% if is_incremental() %}
+
+WHERE trip_id NOT NULL
+
+{% endif %}
