@@ -1,0 +1,263 @@
+version: 2
+
+models:
+  - name: stg_trips
+    description: "Staging table for trip records, featuring standardized timestamps, deduplicated IDs, and validated foreign keys."
+    
+    columns:
+      - name: trip_id
+        description: "Primary key. Deduplicated at the staging layer."
+        tests:
+          - unique
+          - not_null
+      
+      - name: city_id
+        description: "Foreign key linking to the operating city's record."
+        tests:
+          - not_null
+          - relationships:
+              to: ref('stg_cities')
+              field: city_id
+      
+      - name: rider_id
+        description: "Foreign key linking to the rider profile."
+        tests:
+          - not_null
+          - relationships:
+              to: ref('stg_riders')
+              field: rider_id
+      
+      - name: driver_id
+        description: "Foreign key linking to the driver profile."
+        tests:
+          - not_null
+          - relationships:
+              to: ref('stg_drivers')
+              field: driver_id
+      
+      - name: pickup_at
+        description: "Standardized UTC timestamp of the pickup."
+        tests:
+          - not_null
+      
+      - name: created_at
+        description: "System timestamp of record creation."
+        tests:
+          - not_null
+      
+      - name: dropoff_at
+        description: "Standardized UTC timestamp of the dropoff."
+        tests:
+          - not_null
+      
+      - name: updated_at
+        description: "Standardized UTC timestamp of the last record update."
+        tests:
+          - not_null
+      
+      - name: vehicle_id
+        description: "Standardized identifier for the vehicle used."
+        tests:
+          - not_null
+      
+      - name: actual_fare
+        description: "The final fare amount charged to the customer."
+        tests:
+          - not_null
+      
+      - name: is_corporate
+        description: "Boolean flag identifying business-class trips."
+        tests:
+          - not_null
+      
+      - name: requested_at
+        description: "Timestamp of the initial ride request."
+        tests:
+          - not_null
+      
+      - name: estimated_fare
+        description: "Upfront fare estimate provided to the user."
+        tests:
+          - not_null
+      
+      - name: payment_method
+        description: "Cleaned payment method category."
+        tests:
+          - not_null
+      
+      - name: surge_multiplier
+        description: "Pricing multiplier applied due to high demand."
+        tests:
+          - not_null
+  
+  - name: stg_payments
+    description: "Staging table for payment records, with standardized currency codes and validated trip associations."
+    columns:
+      - name: payment_id
+        description: "Primary key. Unique identifier for the transaction.."
+        tests:
+          - unique
+          - not_null
+      
+      - name: fee
+        description: "Transaction fee charged by the payment provider."
+        tests:
+          - not_null
+      
+      - name: amount
+        description: "Gross payment amount charged to the rider."
+        tests:
+          - not_null
+      
+      - name: trip_id
+        description: "Foreign key linking the payment to the corresponding trip record."
+        tests:
+          - not_null
+          - relationships:
+              to: ref('stg_trips')
+              field: trip_id
+      
+      - name: currency
+        description: "ISO currency code used for the transaction."
+        tests:
+          - not_null
+      
+      - name: created_at
+        description: "Standardized UTC timestamp of the payment creation."
+        tests:
+          - not_null
+      
+      - name: payment_status
+        description: "The final status of the transaction (e.g., succeeded, failed)."
+        tests:
+          - not_null
+      
+      - name: payment_provider
+        description: "The third-party gateway used."
+        tests:
+          - not_null
+  
+  - name: stg_driver_status_events
+    description: "Staging table for driver state transitions. This log is used to calculate driver 'uptime' and utilization rates."
+    columns:
+      - name: event_id
+        description: "Primary key. Unique identifier for the status event."
+        tests:
+          - unique
+          - not_null
+      
+      - name: status
+        description: "The standardized driver state (e.g., 'online', 'offline')."
+        tests:
+          - not_null
+      
+      - name: driver_id
+        description: "Foreign key linking to the driver profile."
+        tests:
+          - not_null
+          - relationships:
+              to: ref('stg_drivers')
+              field: driver_id
+      
+      - name: event_timestamp
+        description: "Standardized UTC timestamp of the state change."
+        tests:
+          - not_null
+  
+  - name: stg_drivers
+    description: "Staging dimension table for driver profiles. Contains standardized status codes and validated average ratings."
+    columns:
+      - name: driver_id
+        description: "Primary key. Unique identifier for the driver."
+        tests:
+          - unique
+          - not_null
+      
+      - name: rating
+        description: "Current average rating (0-5 scale) of the driver."
+        tests:
+          - not_null
+      
+      - name: city_id
+        description: "Foreign key to the driver's primary operating city."
+        tests:
+          - not_null
+          - relationships:
+              to: ref('stg_cities')
+              field: city_id
+      
+      - name: created_at
+        description: "Standardized UTC timestamp of profile creation."
+        tests:
+          - not_null
+      
+      - name: updated_at
+        description: "Standardized UTC timestamp of last profile update."
+        tests:
+          - not_null
+      
+      - name: vehicle_id
+        description: "Reference to the vehicle ID used by the driver."
+        tests:
+          - not_null
+      
+      - name: driver_status
+        description: "Current status of the driver (e.g., active, inactive)."
+        tests:
+          - not_null
+      
+      - name: onboarding_date
+        description: "The date the driver was officially activated."
+        tests:
+          - not_null
+  
+  - name: stg_riders
+    description: "Staging dimension table for rider (customer) profiles. Contains standardized registration dates and referral information."
+    columns:
+      - name: rider_id
+        description: "Primary key. Unique identifier for the rider."
+        tests:
+          - unique
+          - not_null
+      
+      - name: country
+        description: "Standardized country name for the rider."
+        tests:
+          - not_null
+      
+      - name: created_at
+        description: "Standardized UTC timestamp of the rider's profile creation."
+        tests:
+          - not_null
+      
+      - name: signup_date
+        description: "The date the rider officially joined the platform."
+        tests:
+          - not_null
+      
+      - name: referral_code
+        description: "The marketing or friend-referral code used during registration."
+  
+  - name: stg_cities
+    description: "Staging dimension table for operating cities. Provides the geographical context for trips and driver registrations."
+    columns:
+      - name: city_id
+        description: "Primary key. Unique identifier for the city."
+        tests:
+          - unique
+          - not_null
+      
+      - name: country
+        description: "The country where the city is located."
+        tests:
+          - not_null
+      
+      - name: city_name
+        description: "Standardized name of the operating city."
+        tests:
+          - not_null
+      
+      - name: launch_date
+        description: "The official launch date for the platform in this city."
+        tests:
+          - not_null
