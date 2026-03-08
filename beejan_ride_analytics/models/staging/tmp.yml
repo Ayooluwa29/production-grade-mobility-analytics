@@ -1,0 +1,7 @@
+05:04:01  Encountered an error while running operation: Compilation Error
+  The name argument to ref() must be a string, got <class 'jinja2.runtime.Undefined'>
+  
+  > in macro default__generate_model_yaml (macros/generate_model_yaml.sql)
+  > called by macro generate_model_yaml (macros/generate_model_yaml.sql)
+  > called by macro generate_staging_model_yaml (macros/generate_staging_model_yaml.sql)
+  > called by <Unknown>

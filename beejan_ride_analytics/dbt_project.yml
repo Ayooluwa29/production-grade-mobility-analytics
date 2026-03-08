@@ -35,4 +35,16 @@ models:
     example:
       +materialized: view
     staging:
+      +materialized: incremental
+      +tags: staging
+      +schema: staging
+    
+    intermediate:
       +materialized: view
+      +tags: intermediate
+      +schema: intermediate
+    
+    marts:
+      +materialized: incremental
+      +tags: marts
+      +schema: marts
