@@ -1,9 +1,3 @@
-22:16:31  Running with dbt=1.11.6
-22:16:34  Registered adapter: bigquery=1.11.0
-22:16:34  [WARNING]: Configuration paths exist in your dbt_project.yml file which do not apply to any resources.
-There are 1 unused configuration paths:
-- models.beejan_ride_analytics.example
-22:16:34  Found 17 models, 1 snapshot, 103 data tests, 6 sources, 687 macros
 version: 2
 
 models:
