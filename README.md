@@ -2,7 +2,7 @@
 An end-to-end, production-ready dbt transformation layer for a UK-based mobility startup. Features modular dimensional modeling, automated data quality testing, and comprehensive documentation to power ride-hailing analytics.
 
 ## Architecture Diagram
-![Project Screenshot](./image/arc_diagram.jpeg) 
+![Project Architecture](./image/arc_diagram.jpeg) 
 
 ## Project Stack
 1. Aribyte - Ingestion from Postgres transactional DB to raw warehouse layer
@@ -98,6 +98,7 @@ BeejanRide processes high trip volumes across 5 cities. Full refreshes would be 
 ### 6. Data Quality
 
 **Generic tests:** `unique`, `not_null`, `relationships`, `accepted_values`
+![Test Screenshot](./image/source_test_view.png)
 
 **Custom tests:**
 
