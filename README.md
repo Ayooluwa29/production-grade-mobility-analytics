@@ -76,6 +76,9 @@ Source definitions include descriptions, freshness checks, and column-level test
 | `fct_payments` | Per payment | Payment details, fraud signals, fare comparisons |
 
 
+**Mart ERD**
+![ERD Image](./image/beejan_ride_mart_ERD.png)
+
 ### 4. Snapshots — SCD Type 2
 `fct_trips` performs a **point-in-time join** to `dim_drivers_history` on `pickup_at` to capture the driver's exact state at the time of the trip.
 
@@ -110,6 +113,14 @@ BeejanRide processes high trip volumes across 5 cities. Full refreshes would be 
 
 
 ### 7. Documentation & Governance
+
+**Documentation Diagrams**
+
+![Project Docs Image](./image/beejan_ride_dbt_docs_project.png)
+
+![Database Docs Image](./image/beejan_ride_dbt_docs_database.png)
+
+![Project LinageImage](./image/beejan_ride_lineage_graph.png)
 
 Every model includes model descriptions, column descriptions, business metric definitions, owner metadata, and tags (`finance`, `operations`, `fraud`).
 ```bash
