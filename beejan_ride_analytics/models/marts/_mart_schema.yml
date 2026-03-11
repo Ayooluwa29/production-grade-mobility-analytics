@@ -1,0 +1,466 @@
+version: 2
+
+models:
+  - name: dim_cities
+    description: "City dimension containing market-level attributes for each operational city BeejanRide is active in."
+    columns:
+      - name: city_id
+        data_type: int64
+        description: "Primary key. Unique identifier for the city."
+        tests:
+          - unique
+          - not_null
+
+      - name: country
+        data_type: string
+        description: "Country where the city is located."
+        tests:
+          - not_null
+
+      - name: city_name
+        data_type: string
+        description: "Name of the operational city."
+        tests:
+          - not_null
+
+      - name: launch_date
+        data_type: date
+        description: "Date when BeejanRide launched operations in this city."
+
+  - name: dim_drivers_current
+    description: "Type 1 dimension reflecting the latest known state of each driver. Used for current-state lookups and driver leaderboard reporting."
+    columns:
+      - name: driver_id
+        data_type: int64
+        description: "Primary key. Unique identifier for the driver."
+        tests:
+          - unique
+          - not_null
+
+      - name: city_id
+        data_type: int64
+        description: "Foreign key to dim_cities. The city the driver is currently operating in."
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_cities')
+              field: city_id
+
+      - name: vehicle_id
+        data_type: string
+        description: "Identifier for the vehicle currently assigned to the driver."
+
+      - name: driver_status
+        data_type: string
+        description: "Current operational status of the driver."
+        tests:
+          - not_null
+          - accepted_values:
+              values: ["active", "inactive", "suspended"]
+
+      - name: rating
+        data_type: numeric
+        description: "Current average rating of the driver."
+
+      - name: driver_lifetime_trips
+        data_type: int64
+        description: "Total number of completed trips by the driver since onboarding."
+
+      - name: onboarding_date
+        data_type: timestamp
+        description: "Timestamp when the driver was onboarded onto the platform. Stored in UTC."
+
+      - name: created_at
+        data_type: timestamp
+        description: "Timestamp when the driver record was first created. Stored in UTC."
+        tests:
+          - not_null
+
+      - name: updated_at
+        data_type: timestamp
+        description: "Timestamp of the most recent update to the driver record. Stored in UTC."
+        tests:
+          - not_null
+
+  - name: dim_drivers_history
+    description: "Type 2 SCD dimension tracking the full history of changes to driver_status, vehicle_id, and rating. Used for point-in-time analysis and driver churn tracking. Each row represents one version of a driver record."
+    columns:
+      - name: driver_surrogate_key
+        data_type: string
+        description: "Primary key. Surrogate key unique per driver per version. Generated from driver_id and dbt_scd_id."
+        tests:
+          - unique
+          - not_null
+
+      - name: driver_id
+        data_type: int64
+        description: "Natural key. Foreign key to dim_drivers_current."
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_drivers_current')
+              field: driver_id
+
+      - name: city_id
+        data_type: int64
+        description: "City the driver was associated with during this version of the record."
+
+      - name: vehicle_id
+        data_type: string
+        description: "Vehicle assigned to the driver during this version of the record."
+
+      - name: driver_status
+        data_type: string
+        description: "Driver's operational status during this version of the record."
+        tests:
+          - not_null
+          - accepted_values:
+              values: ["active", "inactive", "suspended"]
+
+      - name: rating
+        data_type: numeric
+        description: "Driver's rating during this version of the record."
+
+      - name: valid_from
+        data_type: timestamp
+        description: "Timestamp from which this version of the driver record became valid."
+        tests:
+          - not_null
+
+      - name: valid_to
+        data_type: timestamp
+        description: "Timestamp at which this version was superseded by a newer record. NULL if this is the current active version."
+
+      - name: is_current
+        data_type: boolean
+        description: "True if this is the most recent version of the driver record."
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true, false]
+
+      - name: is_deleted
+        data_type: boolean
+        description: "True if the driver was hard-deleted from the source system."
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true, false]
+
+      - name: created_at
+        data_type: datetime
+        description: "Timestamp when the driver record was first created. Stored in UTC."
+        tests:
+          - not_null
+
+      - name: updated_at
+        data_type: datetime
+        description: "Timestamp of the most recent update to the driver record. Stored in UTC."
+        tests:
+          - not_null
+
+  - name: dim_riders
+    description: "Rider dimension containing profile attributes and lifetime value metric. Used for rider segmentation, LTV analysis, and payment reliability reporting."
+    columns:
+      - name: rider_id
+        data_type: int64
+        description: "Primary key. Unique identifier for the rider."
+        tests:
+          - unique
+          - not_null
+
+      - name: country
+        data_type: string
+        description: "Country where the rider is based."
+        tests:
+          - not_null
+
+      - name: referral_code
+        data_type: string
+        description: "Referral code used by the rider during signup, if applicable."
+
+      - name: rider_lifetime_value
+        data_type: numeric
+        description: "Total net revenue generated by the rider across all completed and successfully paid trips."
+        tests:
+          - not_null
+
+      - name: signup_date
+        data_type: timestamp
+        description: "Timestamp when the rider signed up to the platform. Stored in UTC."
+
+      - name: created_at
+        data_type: timestamp
+        description: "Timestamp when the rider record was first created. Stored in UTC."
+        tests:
+          - not_null
+
+  - name: fct_trips
+    description: "Central fact table at trip grain. Contains trip financials, payment details, fraud signals, surge metrics, and point-in-time driver attributes captured at the moment of the trip. Primary table for revenue, operations, and fraud dashboards."
+    columns:
+      - name: trip_id
+        data_type: int64
+        description: "Primary key. Unique identifier for the trip."
+        tests:
+          - unique
+          - not_null
+
+      - name: city_id
+        data_type: int64
+        description: "Foreign key to dim_cities. City in which the trip took place."
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_cities')
+              field: city_id
+
+      - name: rider_id
+        data_type: int64
+        description: "Foreign key to dim_riders. Rider who requested the trip."
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_riders')
+              field: rider_id
+
+      - name: driver_id
+        data_type: int64
+        description: "Foreign key to dim_drivers_current. Driver who fulfilled the trip."
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_drivers_current')
+              field: driver_id
+
+      - name: vehicle_id
+        data_type: string
+        description: "Identifier for the vehicle used during the trip."
+
+      - name: driver_surrogate_key
+        data_type: string
+        description: "Foreign key to dim_drivers_history. Links to the driver version that was active at the time of the trip via point-in-time join on pickup_at."
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_drivers_history')
+              field: driver_surrogate_key
+
+      - name: status
+        data_type: string
+        description: "Final status of the trip."
+        tests:
+          - not_null
+          - accepted_values:
+              values: ["completed", "cancelled", "in_progress"]
+
+      - name: rider_type
+        data_type: string
+        description: "Derived rider classification based on is_corporate flag. Values: Corporate, Personal, Unknown."
+        tests:
+          - accepted_values:
+              values: ["Corporate", "Personal", "Unknown"]
+
+      - name: payment_method
+        data_type: string
+        description: "Payment method used by the rider for this trip (e.g. card, wallet, cash)."
+
+      - name: surge_multiplier_flag
+        data_type: string
+        description: "Categorical surge severity flag. Extreme if surge_multiplier > 10, Normal otherwise."
+        tests:
+          - accepted_values:
+              values: ["Extreme", "Normal"]
+
+      - name: duration_minutes
+        data_type: numeric
+        description: "Total trip duration in minutes calculated from pickup_at to dropoff_at."
+
+      - name: driver_status_at_trip
+        data_type: string
+        description: "The driver's operational status at the time of the trip, sourced from the point-in-time join to dim_drivers_history."
+
+      - name: driver_rating_at_trip
+        data_type: numeric
+        description: "The driver's rating at the time of the trip, sourced from the point-in-time join to dim_drivers_history."
+
+      - name: driver_vehicle_at_trip
+        data_type: string
+        description: "The vehicle assigned to the driver at the time of the trip, sourced from the point-in-time join to dim_drivers_history."
+
+      - name: actual_fare
+        data_type: int64
+        description: "The fare actually charged to the rider for the trip in the smallest currency unit."
+
+      - name: estimated_fare
+        data_type: int64
+        description: "The fare estimated at the time of booking before surge or adjustments."
+
+      - name: surge_multiplier
+        data_type: numeric
+        description: "The surge pricing multiplier applied to this trip at the time of booking."
+
+      - name: fee
+        data_type: numeric
+        description: "Platform or processing fee deducted from the gross payment amount."
+
+      - name: amount_paid
+        data_type: int64
+        description: "Amount actually paid by the rider via the payment provider."
+
+      - name: net_revenue
+        data_type: numeric
+        description: "Revenue retained after deducting the fee from the gross amount. Calculated as amount_paid - fee."
+        tests:
+          - not_null
+
+      - name: payment_status
+        data_type: string
+        description: "Status of the payment associated with this trip."
+        tests:
+          - accepted_values:
+              values: ["success", "failed", "pending"]
+
+      - name: payment_provider
+        data_type: string
+        description: "The payment provider used to process the transaction (e.g. Stripe, PayPal)."
+
+      - name: currency
+        data_type: string
+        description: "ISO 4217 currency code for the transaction (e.g. GBP, USD)."
+
+      - name: duplicate_payments
+        data_type: boolean
+        description: "True if more than one successful payment exists for this trip, indicating a potential duplicate charge."
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true, false]
+
+      - name: fraud_detected
+        data_type: boolean
+        description: "True if fraud signals were detected on this trip — expected fare exceeds actual fare, or actual fare exceeds amount paid."
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true, false]
+
+      - name: requested_at
+        data_type: timestamp
+        description: "Timestamp when the rider initially requested the trip. Stored in UTC."
+
+      - name: created_at
+        data_type: timestamp
+        description: "Timestamp when the trip record was first created. Stored in UTC."
+        tests:
+          - not_null
+
+      - name: pickup_at
+        data_type: timestamp
+        description: "Timestamp when the driver picked up the rider. Stored in UTC."
+
+      - name: dropoff_at
+        data_type: timestamp
+        description: "Timestamp when the rider was dropped off at their destination. Stored in UTC."
+
+      - name: updated_at
+        data_type: timestamp
+        description: "Timestamp of the most recent update to the trip record. Stored in UTC."
+        tests:
+          - not_null
+
+  - name: fct_payments
+    description: "Payment fact table at payment grain. Contains full payment details, net revenue, fraud signals, and fare comparison data. Used for payment reliability reporting, fraud monitoring, and revenue reconciliation."
+    columns:
+      - name: payment_id
+        data_type: int64
+        description: "Primary key. Unique identifier for the payment record."
+        tests:
+          - unique
+          - not_null
+
+      - name: trip_id
+        data_type: int64
+        description: "Foreign key to fct_trips. The trip this payment is associated with."
+        tests:
+          - not_null
+          - relationships:
+              to: ref('fct_trips')
+              field: trip_id
+
+      - name: driver_id
+        data_type: int64
+        description: "Foreign key to dim_drivers_current. Driver associated with the trip this payment belongs to."
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_drivers_current')
+              field: driver_id
+
+      - name: rider_id
+        data_type: int64
+        description: "Foreign key to dim_riders. Rider who made this payment."
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_riders')
+              field: rider_id
+
+      - name: payment_status
+        data_type: string
+        description: "Current status of the payment."
+        tests:
+          - not_null
+          - accepted_values:
+              values: ["success", "failed", "pending"]
+
+      - name: payment_provider
+        data_type: string
+        description: "The payment provider used to process the transaction (e.g. Stripe, PayPal)."
+
+      - name: currency
+        data_type: string
+        description: "ISO 4217 currency code for the transaction (e.g. GBP, USD)."
+
+      - name: duplicate_payments
+        data_type: boolean
+        description: "True if more than one successful payment exists for the same trip_id, indicating a potential duplicate charge."
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true, false]
+
+      - name: fee
+        data_type: numeric
+        description: "Platform or processing fee deducted from the gross payment amount."
+
+      - name: amount
+        data_type: int64
+        description: "Gross payment amount charged to the rider in the smallest currency unit."
+
+      - name: net_revenue
+        data_type: numeric
+        description: "Revenue retained after deducting the fee from the gross amount. Calculated as amount - fee."
+        tests:
+          - not_null
+
+      - name: fraud_detected
+        data_type: boolean
+        description: "True if fraud signals were detected on this payment — expected fare exceeds actual fare, or actual fare exceeds amount paid."
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true, false]
+
+      - name: expected_fare
+        data_type: numeric
+        description: "Calculated expected fare derived from estimated_fare multiplied by surge_multiplier."
+
+      - name: actual_fare
+        data_type: int64
+        description: "The fare actually charged to the rider for the trip."
+
+      - name: created_at
+        data_type: timestamp
+        description: "Timestamp when the payment record was created. Stored in UTC."
+        tests:
+          - not_null
