@@ -464,3 +464,68 @@ models:
         description: "Timestamp when the payment record was created. Stored in UTC."
         tests:
           - not_null
+  
+  - name: fct_driver_status_events
+    description: "Fact table at driver status event grain. Tracks every status change event for each driver over time. Used for driver activity monitoring, churn tracking, and operational reporting."
+    columns:
+      - name: event_id
+        data_type: int64
+        description: "Primary key. Unique identifier for the driver status event."
+        tests:
+          - unique
+          - not_null
+
+      - name: driver_id
+        data_type: int64
+        description: "Foreign key to dim_drivers_current. The driver this event belongs to."
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_drivers_current')
+              field: driver_id
+
+      - name: city_id
+        data_type: int64
+        description: "Foreign key to dim_cities. The city the driver was operating in at the time of the event."
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_cities')
+              field: city_id
+
+      - name: event_status
+        data_type: string
+        description: "The driver's status at the time of this event."
+        tests:
+          - not_null
+          - accepted_values:
+              values: ["active", "inactive", "suspended"]
+
+      - name: event_timestamp
+        data_type: timestamp
+        description: "Timestamp when the status event occurred. Stored in UTC."
+        tests:
+          - not_null
+
+      - name: previous_status
+        data_type: string
+        description: "The driver's status immediately before this event. NULL if this is the driver's first recorded status event."
+        tests:
+          - accepted_values:
+              values: ["active", "inactive", "suspended"]
+
+      - name: is_status_change
+        data_type: boolean
+        description: "True if the event_status differs from the previous_status, indicating an actual status transition occurred."
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true, false]
+
+      - name: is_churn_event
+        data_type: boolean
+        description: "True if this event represents a driver churning — transitioning from active to inactive or suspended status."
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true, false]
