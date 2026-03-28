@@ -1,0 +1,182 @@
+version: 2
+
+models:
+  - name: int_driver_lifetime_trips
+    description: ""
+    columns:
+      - name: driver_id
+        data_type: int64
+        description: ""
+
+      - name: driver_lifetime_trips
+        data_type: int64
+        description: ""
+
+  - name: int_payments_enriched
+    description: ""
+    columns:
+      - name: payment_id
+        data_type: int64
+        description: ""
+
+      - name: trip_id
+        data_type: int64
+        description: ""
+
+      - name: payment_status
+        data_type: string
+        description: ""
+
+      - name: payment_provider
+        data_type: string
+        description: ""
+
+      - name: currency
+        data_type: string
+        description: ""
+
+      - name: duplicate_payments
+        data_type: boolean
+        description: ""
+
+      - name: fee
+        data_type: numeric
+        description: ""
+
+      - name: amount
+        data_type: int64
+        description: ""
+
+      - name: net_revenue
+        data_type: numeric
+        description: ""
+
+      - name: created_at
+        data_type: timestamp
+        description: ""
+
+  - name: int_fraud_indicators
+    description: ""
+    columns:
+      - name: payment_id
+        data_type: int64
+        description: ""
+
+      - name: trip_id
+        data_type: int64
+        description: ""
+
+      - name: driver_id
+        data_type: int64
+        description: ""
+
+      - name: rider_id
+        data_type: int64
+        description: ""
+
+      - name: expected_fare
+        data_type: numeric
+        description: ""
+
+      - name: actual_fare
+        data_type: int64
+        description: ""
+
+      - name: amount_paid
+        data_type: int64
+        description: ""
+
+      - name: fraud_detected
+        data_type: boolean
+        description: ""
+
+  - name: int_rider_lifetime_value
+    description: ""
+    columns:
+      - name: rider_id
+        data_type: int64
+        description: ""
+
+      - name: rider_lifetime_value
+        data_type: numeric
+        description: ""
+
+  - name: int_trips_enriched
+    description: ""
+    columns:
+      - name: trip_id
+        data_type: int64
+        description: ""
+
+      - name: city_id
+        data_type: int64
+        description: ""
+
+      - name: rider_id
+        data_type: int64
+        description: ""
+
+      - name: driver_id
+        data_type: int64
+        description: ""
+
+      - name: vehicle_id
+        data_type: string
+        description: ""
+
+      - name: status
+        data_type: string
+        description: ""
+
+      - name: is_corporate
+        data_type: boolean
+        description: ""
+
+      - name: rider_type
+        data_type: string
+        description: ""
+
+      - name: payment_method
+        data_type: string
+        description: ""
+
+      - name: actual_fare
+        data_type: int64
+        description: ""
+
+      - name: estimated_fare
+        data_type: int64
+        description: ""
+
+      - name: surge_multiplier
+        data_type: numeric
+        description: ""
+
+      - name: surge_multiplier_flag
+        data_type: string
+        description: ""
+
+      - name: duration_minutes
+        data_type: numeric
+        description: ""
+
+      - name: pickup_at
+        data_type: timestamp
+        description: ""
+
+      - name: created_at
+        data_type: timestamp
+        description: ""
+
+      - name: dropoff_at
+        data_type: timestamp
+        description: ""
+
+      - name: updated_at
+        data_type: timestamp
+        description: ""
+
+      - name: requested_at
+        data_type: timestamp
+        description: ""
+

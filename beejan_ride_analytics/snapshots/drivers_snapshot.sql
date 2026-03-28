@@ -10,6 +10,17 @@
     )
 }}
 
-select * from {{ source('raw', 'drivers_raw') }}
+select
+
+    driver_id,
+    city_id,
+    vehicle_id,
+    driver_status,
+    rating,
+    created_at,
+    updated_at,
+    onboarding_date
+
+from {{ source('raw', 'drivers_raw') }}
 
 {% endsnapshot %}

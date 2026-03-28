@@ -24,7 +24,12 @@ The goal of this project is to build a production-grade analytics engine that tr
 
 ## Implementation
 
-### 1. Staging Layer
+### 1. Raw Layer
+This is the ingestion layer. Integrating data from the source (PostgreSQL database) into the raw layer in the data warehouse (BigQuery)
+
+![Airbyte stream sync Image](./image/beejan_ride_ingestion.png)
+
+### 2. Staging Layer
 
 Each raw table has a staging model that performs:
 - Column renaming to `snake_case`
@@ -39,7 +44,7 @@ Source definitions include descriptions, freshness checks, and column-level test
 
 ---
 
-### 2. Intermediate Layer
+### 3. Intermediate Layer
 | Model | Logic |
 |-------|-------|
 | `int_trips_enriched` | Trip duration, corporate flag, surge flag, rider type |
@@ -57,7 +62,7 @@ Source definitions include descriptions, freshness checks, and column-level test
 | `get_duration_minutes(start, end)` | Trip duration in minutes |
 
 
-### 3. Marts Layer — Star Schema
+### 4. Marts Layer — Star Schema
 
 **Dimensions:**
 
@@ -79,11 +84,11 @@ Source definitions include descriptions, freshness checks, and column-level test
 **Mart ERD**
 ![ERD Image](./image/beejan_ride_mart_ERD.png)
 
-### 4. Snapshots — SCD Type 2
+### 5. Snapshots — SCD Type 2
 `fct_trips` performs a **point-in-time join** to `dim_drivers_history` on `pickup_at` to capture the driver's exact state at the time of the trip.
 
 
-### 5. Incremental Models
+### 6. Incremental Models
 
 **Why incremental is required:**
 BeejanRide processes high trip volumes across 5 cities. Full refreshes would be expensive and slow at scale. Incremental models process only new or updated records, reducing cost and runtime significantly.
@@ -98,7 +103,7 @@ BeejanRide processes high trip volumes across 5 cities. Full refreshes would be 
 | Complexity | Simple | Requires `unique_key` + filter logic |
 
 
-### 6. Data Quality
+### 7. Data Quality
 
 **Generic tests:** `unique`, `not_null`, `relationships`, `accepted_values`
 ![Test Screenshot](./image/source_test_view.png)
@@ -112,10 +117,14 @@ BeejanRide processes high trip volumes across 5 cities. Full refreshes would be 
 | `completed_trip_has_payment` | Every completed trip has a successful payment |
 
 
-### 7. Documentation & Governance
+### 8. Documentation & Governance
 
 **Documentation Diagrams**
 
+```bash
+dbt docs generate
+dbt docs serve
+```
 ![Project Docs Image](./image/beejan_ride_dbt_docs_project.png)
 
 ![Database Docs Image](./image/beejan_ride_dbt_docs_database.png)
@@ -123,9 +132,6 @@ BeejanRide processes high trip volumes across 5 cities. Full refreshes would be 
 ![Project LinageImage](./image/beejan_ride_lineage_graph.png)
 
 Every model includes model descriptions, column descriptions, business metric definitions, owner metadata, and tags (`finance`, `operations`, `fraud`).
-```bash
-dbt docs generate
-dbt docs serve
 
 
 ## Design Decisions

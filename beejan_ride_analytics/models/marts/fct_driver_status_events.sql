@@ -13,25 +13,19 @@ SELECT
     e.status AS event_status,
     e.event_timestamp,
     -- Previous event context
-    LAG(e.status) OVER (
-        PARTITION BY e.driver_id
-        ORDER BY e.event_timestamp
-    )   AS previous_status,
+    LAG(e.status) OVER (PARTITION BY e.driver_id ORDER BY e.event_timestamp
+                        ) AS previous_status,
     -- Flag status transitions
     CASE
-        WHEN LAG(e.status) OVER (
-            PARTITION BY e.driver_id
-            ORDER BY e.event_timestamp
-        ) != e.status THEN TRUE
+        WHEN LAG(e.status) OVER (PARTITION BY e.driver_id ORDER BY e.event_timestamp
+                                ) != e.status THEN TRUE
         ELSE FALSE
     END AS is_status_change,
     -- Flag potential churn (active → inactive/suspended)
     CASE
         WHEN e.status IN ('inactive', 'suspended')
-        AND LAG(e.status) OVER (
-            PARTITION BY e.driver_id
-            ORDER BY e.event_timestamp
-        ) = 'active' THEN TRUE
+        AND LAG(e.status) OVER (PARTITION BY e.driver_id ORDER BY e.event_timestamp
+                                ) = 'active' THEN TRUE
         ELSE FALSE
     END AS is_churn_event
 

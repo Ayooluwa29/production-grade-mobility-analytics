@@ -1,0 +1,325 @@
+version: 2
+
+models:
+  - name: dim_cities
+    description: ""
+    columns:
+      - name: city_id
+        data_type: int64
+        description: ""
+
+      - name: country
+        data_type: string
+        description: ""
+
+      - name: city_name
+        data_type: string
+        description: ""
+
+      - name: launch_date
+        data_type: date
+        description: ""
+
+  - name: dim_drivers_current
+    description: ""
+    columns:
+      - name: driver_id
+        data_type: int64
+        description: ""
+
+      - name: city_id
+        data_type: int64
+        description: ""
+
+      - name: vehicle_id
+        data_type: string
+        description: ""
+
+      - name: driver_status
+        data_type: string
+        description: ""
+
+      - name: rating
+        data_type: numeric
+        description: ""
+
+      - name: driver_lifetime_trips
+        data_type: int64
+        description: ""
+
+      - name: onboarding_date
+        data_type: timestamp
+        description: ""
+
+      - name: created_at
+        data_type: timestamp
+        description: ""
+
+      - name: updated_at
+        data_type: timestamp
+        description: ""
+
+  - name: dim_drivers_history
+    description: ""
+    columns:
+      - name: driver_surrogate_key
+        data_type: string
+        description: ""
+
+      - name: driver_id
+        data_type: int64
+        description: ""
+
+      - name: city_id
+        data_type: int64
+        description: ""
+
+      - name: vehicle_id
+        data_type: string
+        description: ""
+
+      - name: driver_status
+        data_type: string
+        description: ""
+
+      - name: rating
+        data_type: numeric
+        description: ""
+
+      - name: valid_from
+        data_type: timestamp
+        description: ""
+
+      - name: valid_to
+        data_type: timestamp
+        description: ""
+
+      - name: is_current
+        data_type: boolean
+        description: ""
+
+      - name: is_deleted
+        data_type: boolean
+        description: ""
+
+      - name: created_at
+        data_type: datetime
+        description: ""
+
+      - name: updated_at
+        data_type: datetime
+        description: ""
+
+  - name: dim_riders
+    description: ""
+    columns:
+      - name: rider_id
+        data_type: int64
+        description: ""
+
+      - name: country
+        data_type: string
+        description: ""
+
+      - name: referral_code
+        data_type: string
+        description: ""
+
+      - name: rider_lifetime_value
+        data_type: numeric
+        description: ""
+
+      - name: signup_date
+        data_type: timestamp
+        description: ""
+
+      - name: created_at
+        data_type: timestamp
+        description: ""
+
+  - name: fct_trips
+    description: ""
+    columns:
+      - name: trip_id
+        data_type: int64
+        description: ""
+
+      - name: city_id
+        data_type: int64
+        description: ""
+
+      - name: rider_id
+        data_type: int64
+        description: ""
+
+      - name: driver_id
+        data_type: int64
+        description: ""
+
+      - name: vehicle_id
+        data_type: string
+        description: ""
+
+      - name: driver_surrogate_key
+        data_type: string
+        description: ""
+
+      - name: status
+        data_type: string
+        description: ""
+
+      - name: rider_type
+        data_type: string
+        description: ""
+
+      - name: payment_method
+        data_type: string
+        description: ""
+
+      - name: surge_multiplier_flag
+        data_type: string
+        description: ""
+
+      - name: duration_minutes
+        data_type: numeric
+        description: ""
+
+      - name: driver_status_at_trip
+        data_type: string
+        description: ""
+
+      - name: driver_rating_at_trip
+        data_type: numeric
+        description: ""
+
+      - name: driver_vehicle_at_trip
+        data_type: string
+        description: ""
+
+      - name: actual_fare
+        data_type: int64
+        description: ""
+
+      - name: estimated_fare
+        data_type: int64
+        description: ""
+
+      - name: surge_multiplier
+        data_type: numeric
+        description: ""
+
+      - name: fee
+        data_type: numeric
+        description: ""
+
+      - name: amount_paid
+        data_type: int64
+        description: ""
+
+      - name: net_revenue
+        data_type: numeric
+        description: ""
+
+      - name: payment_status
+        data_type: string
+        description: ""
+
+      - name: payment_provider
+        data_type: string
+        description: ""
+
+      - name: currency
+        data_type: string
+        description: ""
+
+      - name: duplicate_payments
+        data_type: boolean
+        description: ""
+
+      - name: fraud_detected
+        data_type: boolean
+        description: ""
+
+      - name: requested_at
+        data_type: timestamp
+        description: ""
+
+      - name: created_at
+        data_type: timestamp
+        description: ""
+
+      - name: pickup_at
+        data_type: timestamp
+        description: ""
+
+      - name: dropoff_at
+        data_type: timestamp
+        description: ""
+
+      - name: updated_at
+        data_type: timestamp
+        description: ""
+
+  - name: fct_payments
+    description: ""
+    columns:
+      - name: payment_id
+        data_type: int64
+        description: ""
+
+      - name: trip_id
+        data_type: int64
+        description: ""
+
+      - name: driver_id
+        data_type: int64
+        description: ""
+
+      - name: rider_id
+        data_type: int64
+        description: ""
+
+      - name: payment_status
+        data_type: string
+        description: ""
+
+      - name: payment_provider
+        data_type: string
+        description: ""
+
+      - name: currency
+        data_type: string
+        description: ""
+
+      - name: duplicate_payments
+        data_type: boolean
+        description: ""
+
+      - name: fee
+        data_type: numeric
+        description: ""
+
+      - name: amount
+        data_type: int64
+        description: ""
+
+      - name: net_revenue
+        data_type: numeric
+        description: ""
+
+      - name: fraud_detected
+        data_type: boolean
+        description: ""
+
+      - name: expected_fare
+        data_type: numeric
+        description: ""
+
+      - name: actual_fare
+        data_type: int64
+        description: ""
+
+      - name: created_at
+        data_type: timestamp
+        description: ""
+
