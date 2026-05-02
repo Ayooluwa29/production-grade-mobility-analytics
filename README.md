@@ -9,6 +9,7 @@ An end-to-end, production-ready dbt transformation layer for a UK-based mobility
 2. dbt-core - Transformation, testing, documentation
 3. BigQuery - Cloud data warehouse
 4. GitHub - Version control
+5. Airflow - Orchestration
 
 ## Objectives
 The goal of this project is to build a production-grade analytics engine that transforms raw mobility data into actionable growth levers. By completion, the platform will deliver:
